@@ -1,0 +1,14 @@
+{
+	"installed_packages":
+	[
+		"Composer",
+		"Emmet",
+		"Git",
+		"Markdown Preview",
+		"Open-Include",
+		"Package Control",
+		"SublimeBlockCursor",
+		"SublimeLinter",
+		"Xdebug"
+	]
+}
