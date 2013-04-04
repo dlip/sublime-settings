@@ -11,7 +11,7 @@
 		"action_args": {"insert_command": "vi_delete"}},
 		"context": [{"key": "setting.command_mode"}]
 	},
-	//text motion inner word
+	//Replace word (w,w)
 	{ "keys": ["w"], "command": "set_motion", "args": {
 		"motion": "vi_expand_to_words",
 		"motion_args": {"repeat": 1}},
