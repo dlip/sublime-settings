@@ -19,14 +19,50 @@
 	},
 
 	// F
+	//Find on line
+	{ "keys": ["f", "<character>"], "command": "set_motion", "args": {
+		"motion": "vi_move_to_character",
+		"motion_args": {"extend": true },
+		"inclusive": true,
+		"clip_to_line": true },
+		"context": [{"key": "setting.command_mode"}]
+	},
+	//Find on line reverse
+	{ "keys": ["F", "<character>"], "command": "set_motion", "args": {
+		"motion": "vi_move_to_character",
+		"motion_args": {"extend": true, "forward": false },
+		"inclusive": true,
+		"clip_to_line": true },
+		"context": [{"key": "setting.command_mode"}]
+	},
 
 	// P
+	//Go to anything
+	{ "keys": ["p"], "command": "show_overlay", "args":
+		{"overlay": "goto", "show_files": true},
+		"context": [{"key": "setting.command_mode"}]
+	},
+	//Auto completion
+	{ "keys": ["ctrl+p"], "command": "insert_best_completion", "args": {"default": "\t", "exact": true} },
+	{ "keys": ["ctrl+p"], "command": "insert_best_completion", "args": {"default": "\t", "exact": false},
+		"context":
+		[
+			{ "key": "setting.tab_completion", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["ctrl+p"], "command": "replace_completion_with_next_completion", "context":
+		[
+			{ "key": "last_command", "operator": "equal", "operand": "insert_best_completion" },
+			{ "key": "setting.tab_completion", "operator": "equal", "operand": true }
+		]
+	},
 
 	// G
 
 	// ----------------------------------------------
 
 	// A
+	//Visual mode
 	{ "keys": ["a"], "command": "enter_visual_mode",
 		"context": [{"key": "setting.command_mode"}]
 	},
@@ -66,6 +102,7 @@
 
 
 	// S
+	//Insert before cursor
 	{ "keys": ["s"], "command": "enter_insert_mode",
 	  "context":
 	  [
@@ -73,11 +110,11 @@
 			{"key": "selection_empty"}
 	  ]
 	},
+	//Insert bol
 	{ "keys": ["S"], "command": "enter_insert_mode", "args":
 		{"insert_command": "vi_move_to_first_non_white_space_character"},
 		"context": [{"key": "setting.command_mode"}]
 	},
-
 	{ "keys": ["S"], "command": "enter_insert_mode",
 		"args": {"insert_command": "shrink_selections_to_beginning"},
 		"context": [
@@ -87,6 +124,7 @@
 	},
 
 	// T
+	//Insert after cursor
 	{ "keys": ["t"], "command": "enter_insert_mode", "args":
 		{"insert_command": "move", "insert_args": {"by": "characters", "forward": true} },
 		"context":
@@ -95,17 +133,25 @@
 			{"key": "selection_empty"}
 		]
 	},
+	//Insert eol
 	{ "keys": ["T"], "command": "enter_insert_mode", "args":
 		{"insert_command": "move_to", "insert_args": {"to": "hardeol"} },
 		"context": [{"key": "setting.command_mode"}]
 	},
 
 	// D
+	//Right delete
 	{ "keys": ["d"], "command": "set_action_motion", "args": {
 		"action": "vi_right_delete",
 		"motion": null },
 		"context": [{"key": "setting.command_mode"}]
 	},	
+	//Left delete
+	{ "keys": ["D"], "command": "set_action_motion", "args": {
+		"action": "vi_left_delete",
+		"motion": null },
+		"context": [{"key": "setting.command_mode"}]
+	},
 
 	// ----------------------------------------------
 
@@ -130,8 +176,17 @@
 			{"key": "vi_action", "operand": "vi_delete"}
 		]
 	},
+	//Delete to eol
+	{ "keys": ["X"], "command": "set_action_motion", "args": {
+		"action": "vi_delete",
+		"motion": "vi_move_to_hard_eol",
+		"motion_args": {"repeat": 1, "extend": true},
+		"motion_inclusive": true },
+		"context": [{"key": "setting.command_mode"}]
+	},
 
 	// C
+	//Copy
 	{ "keys": ["c"], "command": "set_action", "args": {
 		"action": "vi_copy",
 		"description": "Yank"},
@@ -150,6 +205,7 @@
 
 
 	// V
+	//Paste
 	{ "keys": ["V"], "command": "vi_paste_left",
 		"context": [{"key": "setting.command_mode"}]
 	},
@@ -181,22 +237,16 @@
 
 	// J
 
-	// Page Up
-	{ "keys": ["j"], "command": "set_motion", "args": {
-		"motion": "move",
-		"motion_args": {"by": "pages", "forward": false, "extend": true },
-		"linewise": true },
-		"context": [{"key": "setting.command_mode"}]
-	},
-
 
 	// L
+	//Word back
 	{ "keys": ["l"], "command": "set_motion", "args": {
 		"motion": "move",
 		"motion_args": {"by": "stops", "word_begin": true, "punct_begin": true, "empty_line": true, "forward": false, "extend": true },
 		"clip_to_line": true },
 		"context": [{"key": "setting.command_mode"}]
 	},
+	//Big word back
 	{ "keys": ["L"], "command": "set_motion", "args": {
 		"motion": "move",
 		"motion_args": {"by": "stops", "word_begin": true, "empty_line": true, "separators": "", "forward": false, "extend": true },
@@ -205,44 +255,63 @@
 	},
 
 	// U
+	//Up
 	{ "keys": ["u"], "command": "set_motion", "args": {
 		"motion": "move",
 		"motion_args": {"by": "lines", "forward": false, "extend": true },
 		"linewise": true },
 		"context": [{"key": "setting.command_mode"}]
 	},
-
-	// Y
-	{ "keys": ["Y"], "command": "set_motion", "args": {
+	//Page Up
+	{ "keys": ["U"], "command": "set_motion", "args": {
 		"motion": "move",
-		"motion_args": {"by": "stops", "word_begin": true, "empty_line": true, "separators": "", "forward": true, "extend": true },
-		"clip_to_line": true },
+		"motion_args": {"by": "pages", "forward": false, "extend": true },
+		"linewise": true },
 		"context": [{"key": "setting.command_mode"}]
 	},
+
+	// Y
+	//Word forward
 	{ "keys": ["y"], "command": "set_motion", "args": {
 		"motion": "move",
 		"motion_args": {"by": "stops", "word_begin": true, "punct_begin": true, "empty_line": true, "forward": true, "extend": true },
 		"clip_to_line": true },
 		"context": [{"key": "setting.command_mode"}]
 	},
+	//Big word forward
+	{ "keys": ["Y"], "command": "set_motion", "args": {
+		"motion": "move",
+		"motion_args": {"by": "stops", "word_begin": true, "empty_line": true, "separators": "", "forward": true, "extend": true },
+		"clip_to_line": true },
+		"context": [{"key": "setting.command_mode"}]
+	},
+
+	// ;
+	//Command pallete
+	{ "keys": [";"], "command": "show_overlay", "args":
+		{"overlay": "command_palette"},
+		"context": [{"key": "setting.command_mode"}]
+	},
+
 
 	// ----------------------------------------------
 
 	// H
-	{ "keys": ["h"], "command": "set_motion", "args": {
-		"motion": "move",
-		"motion_args": {"by": "pages", "forward": true, "extend": true },
-		"linewise": true },
+	//Find next reverse
+	{ "keys": ["h"], "command": "set_repeat_move_to_character_motion",
+		"args": {"reverse": true},
 		"context": [{"key": "setting.command_mode"}]
 	},
 
 
 	// N
+	//left
 	{ "keys": ["n"], "command": "set_motion", "args": {
 		"motion": "vi_move_by_characters_in_line",
 		"motion_args": {"forward": false, "extend": true }},
 		"context": [{"key": "setting.command_mode"}]
 	},
+	//start of line
 	{ "keys": ["N"], "command": "set_motion", "args": {
 		"motion": "vi_move_to_first_non_white_space_character",
 		"motion_args": {"extend": true },
@@ -251,35 +320,19 @@
 	},
 
 	// E
+	//down
 	{ "keys": ["e"], "command": "set_motion", "args": {
 		"motion": "move",
 		"motion_args": {"by": "lines", "forward": true, "extend": true },
 		"linewise": true },
 		"context": [{"key": "setting.command_mode"}]
 	},
-	{ "keys": ["ctrl+e"], "command": "exit_insert_mode",
-		"context":
-		[
-			{ "key": "setting.command_mode", "operand": false },
-			{ "key": "setting.is_widget", "operand": false }
-		]
-	},
-
-	{ "keys": ["ctrl+e"], "command": "exit_visual_mode",
-		"context":
-		[
-			{ "key": "setting.command_mode"},
-			{ "key": "num_selections", "operand": 1},
-			{ "key": "selection_empty", "operator": "equal", "operand": false, "match_all": false }
-		]
-	},
-
-	{ "keys": ["ctrl+e"], "command": "vi_cancel_current_action", "context":
-		[
-			{ "key": "setting.command_mode" },
-			{ "key": "vi_has_input_state" },
-			{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": false }
-		]
+	//page down
+	{ "keys": ["E"], "command": "set_motion", "args": {
+		"motion": "move",
+		"motion_args": {"by": "pages", "forward": true, "extend": true },
+		"linewise": true },
+		"context": [{"key": "setting.command_mode"}]
 	},
 
 
@@ -299,17 +352,38 @@
 
 
 	// O
+	{ "keys": ["o"], "command": "enter_insert_mode", "args":
+		{"insert_command": "run_macro_file", "insert_args": {"file": "Packages/Default/Add Line.sublime-macro"} },
+		"context": [{"key": "setting.command_mode"}]
+	},
+	{ "keys": ["o"], "command": "vi_reverse_selections_direction",
+		"context":
+		[
+			{"key": "setting.command_mode"},
+			{"key": "selection_empty", "operator": "equal", "operand": false}
+		]
+	},
+	{ "keys": ["O"], "command": "enter_insert_mode", "args":
+		{"insert_command": "run_macro_file", "insert_args": {"file": "Packages/Default/Add Line Before.sublime-macro"} },
+		"context": [{"key": "setting.command_mode"}]
+	},
 
 	// '
+	//find next forward
+	{ "keys": ["'"], "command": "set_repeat_move_to_character_motion",
+		"context": [{"key": "setting.command_mode"}]
+	},
 
 	// ----------------------------------------------
 
 	// K
+	//Find next
 	{
 		"keys": ["k"], "command": "find_next",
 		"args": {"select_text": false},
 		"context": [{"key": "setting.command_mode"}]
 	},
+	//Find prev
 	{
 		"keys": ["K"],
 		"command": "find_prev",
@@ -320,15 +394,72 @@
 	// M
 
 	// ,
+	//End of word
+	{ "keys": [","], "command": "set_motion", "args": {
+		"motion": "move",
+		"motion_args": {"by": "stops", "word_end": true, "punct_end": true, "empty_line": true, "forward": true, "extend": true },
+		"inclusive": true,
+		"clip_to_line": true },
+		"context": [{"key": "setting.command_mode"}]
+	},
+	//Beginning of word
+	{ "keys": ["<"], "command": "set_motion", "args": {
+		"motion": "move",
+		"motion_args": {"by": "stops", "word_begin": true, "punct_begin": true, "empty_line": true, "forward": false, "extend": true },
+		"clip_to_line": true },
+		"context": [{"key": "setting.command_mode"}]
+	},
 
 	// .
 
 	// /
 
+	// Tab
+	{ "keys": ["tab"], "command": "exit_insert_mode",
+		"context":
+		[
+			{ "key": "setting.command_mode", "operand": false },
+			{ "key": "setting.is_widget", "operand": false }
+		]
+	},
 
-	// escape
+	{ "keys": ["tab"], "command": "exit_visual_mode",
+		"context":
+		[
+			{ "key": "setting.command_mode"},
+			{ "key": "num_selections", "operand": 1},
+			{ "key": "selection_empty", "operator": "equal", "operand": false, "match_all": false }
+		]
+	},
 
-	//backspace
+	{ "keys": ["tab"], "command": "hide_auto_complete", "context":
+		[
+			{ "key": "auto_complete_visible", "operator": "equal", "operand": true }
+		]
+	},
+
+	{ "keys": ["tab"], "command": "vi_cancel_current_action", "context":
+		[
+			{ "key": "setting.command_mode" },
+			{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": false },
+			{ "key": "vi_has_input_state" }
+		]
+	},
+
+
+	// Enter
+	//Add line
+	{ "keys": ["enter"], "command": "run_macro_file", "args": {
+		"file": "Packages/Default/Add Line.sublime-macro" },
+		"context": [{"key": "setting.command_mode"}]
+	},
+	//Add line before
+	{ "keys": ["shift+enter"], "command": "run_macro_file", "args": {
+		"file": "Packages/Default/Add Line Before.sublime-macro" },
+		"context": [{"key": "setting.command_mode"}]
+	},
+
+	// Backspace
 	{ "keys": ["backspace"], "command": "set_action_motion", "args": {
 		"action": "vi_left_delete",
 		"motion": null },
