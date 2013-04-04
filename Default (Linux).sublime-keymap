@@ -4,7 +4,7 @@
 	// Q
 
 	// W
-	// replace
+	//Warp (replace)
 	{ "keys": ["w"], "command": "set_action", "args": {
 		"action": "enter_insert_mode",
 		"description": "Change",
@@ -16,6 +16,18 @@
 		"motion": "vi_expand_to_words",
 		"motion_args": {"repeat": 1}},
 		"context": [{"key": "setting.command_mode"}, {"key": "vi_can_enter_text_object"}]
+	},
+	//fix to replace in visual mode
+	{ "keys": ["w"], "command": "set_action", "args": {
+		"action": "enter_insert_mode",
+		"description": "Change",
+		"action_args": {"insert_command": "vi_delete"}},
+		"context":
+		[
+			{ "key": "setting.command_mode"},
+			{ "key": "num_selections", "operand": 1},
+			{ "key": "selection_empty", "operator": "equal", "operand": false, "match_all": false }
+		]
 	},
 
 	// F
@@ -54,6 +66,30 @@
 		[
 			{ "key": "last_command", "operator": "equal", "operand": "insert_best_completion" },
 			{ "key": "setting.tab_completion", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["ctrl+p"], "command": "reindent", "context":
+		[
+			{ "key": "setting.auto_indent", "operator": "equal", "operand": true },
+			{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true },
+			{ "key": "preceding_text", "operator": "regex_match", "operand": "^$", "match_all": true },
+			{ "key": "following_text", "operator": "regex_match", "operand": "^$", "match_all": true }
+		]
+	},
+	{ "keys": ["ctrl+p"], "command": "indent", "context":
+		[
+			{ "key": "text", "operator": "regex_contains", "operand": "\n" }
+		]
+	},
+	{ "keys": ["ctrl+p"], "command": "next_field", "context":
+		[
+			{ "key": "has_next_field", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["ctrl+p"], "command": "commit_completion", "context":
+		[
+			{ "key": "auto_complete_visible" },
+			{ "key": "setting.auto_complete_commit_on_tab" }
 		]
 	},
 
@@ -99,6 +135,15 @@
 	},
 
 	// R
+	//Replace
+	{ "keys": ["r", "enter"], "command": "replace_character",
+		"args": {"character": "\n"},
+		"context": [{"key": "setting.command_mode"}]
+	},
+
+	{ "keys": ["r", "<character>"], "command": "replace_character",
+		"context": [{"key": "setting.command_mode"}]
+	},
 
 
 	// S
@@ -216,7 +261,7 @@
 
 
 	// B
-	//  Before (Til)
+	//Before (Til)
 	{ "keys": ["b", "<character>"], "command": "set_motion", "args": {
 		"motion": "vi_move_to_character",
 		"motion_args": {"extend": true, "before": true },
@@ -394,27 +439,71 @@
 	// M
 
 	// ,
-	//End of word
-	{ "keys": [","], "command": "set_motion", "args": {
-		"motion": "move",
-		"motion_args": {"by": "stops", "word_end": true, "punct_end": true, "empty_line": true, "forward": true, "extend": true },
-		"inclusive": true,
-		"clip_to_line": true },
-		"context": [{"key": "setting.command_mode"}]
-	},
-	//Beginning of word
+	//Unindent
 	{ "keys": ["<"], "command": "set_motion", "args": {
-		"motion": "move",
-		"motion_args": {"by": "stops", "word_begin": true, "punct_begin": true, "empty_line": true, "forward": false, "extend": true },
-		"clip_to_line": true },
-		"context": [{"key": "setting.command_mode"}]
+		"motion": "expand_selection",
+		"motion_args": {"to": "line" },
+		"mode": "normal"},
+		"context":
+		[
+			{"key": "setting.command_mode"},
+			{"key": "vi_action", "operand": "vi_unindent"}
+		]
 	},
 
 	// .
-
+	//Repeat
+	{ "keys": ["."], "command": "repeat", "context": [{"key": "setting.command_mode"}] },
+	//Indent
+	{ "keys": [">"], "command": "set_motion", "args": {
+		"motion": "expand_selection",
+		"motion_args": {"to": "line" },
+		"mode": "normal"},
+		"context":
+		[
+			{"key": "setting.command_mode"},
+			{"key": "vi_action", "operand": "vi_indent"}
+		]
+	},
 	// /
 
 	// Tab
+	//Sublime escape map
+	{ "keys": ["shift+tab"], "command": "insert", "args": {"characters": "\t"}},
+	{ "keys": ["tab"], "command": "single_selection", "context":
+		[
+			{ "key": "num_selections", "operator": "not_equal", "operand": 1 }
+		]
+	},
+	{ "keys": ["tab"], "command": "clear_fields", "context":
+		[
+			{ "key": "has_next_field", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["tab"], "command": "clear_fields", "context":
+		[
+			{ "key": "has_prev_field", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["tab"], "command": "hide_panel", "args": {"cancel": true},
+		"context":
+		[
+			{ "key": "panel_visible", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["tab"], "command": "hide_overlay", "context":
+		[
+			{ "key": "overlay_visible", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["tab"], "command": "hide_auto_complete", "context":
+		[
+			{ "key": "auto_complete_visible", "operator": "equal", "operand": true }
+		]
+	},
+
+
+	//Vintage escape
 	{ "keys": ["tab"], "command": "exit_insert_mode",
 		"context":
 		[
