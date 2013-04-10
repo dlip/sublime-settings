@@ -54,6 +54,11 @@
 		{"overlay": "goto", "show_files": true},
 		"context": [{"key": "setting.command_mode"}]
 	},
+	//Go to symbol
+	{ "keys": ["P"], "command": "show_overlay", "args": 
+		{"overlay": "goto", "text": "@"},
+		"context": [{"key": "setting.command_mode"}]
+    },
 	//Auto completion
 	{ "keys": ["ctrl+p"], "command": "insert_best_completion", "args": {"default": "\t", "exact": true} },
 	{ "keys": ["ctrl+p"], "command": "insert_best_completion", "args": {"default": "\t", "exact": false},
@@ -281,7 +286,8 @@
 	// ----------------------------------------------
 
 	// J
-
+	{ "keys": ["j"], "command": "join_lines", "context": [{"key": "setting.command_mode"}] },
+	{ "keys": ["J"], "command": "join_lines", "context": [{"key": "setting.command_mode"}] },
 
 	// L
 	//Word back
